@@ -1,7 +1,7 @@
 # LiFePO4 Battery Cell Monitor & Simscape ECM Validation
 
 **Author:** Sepehr Sagheb  
-**Institution:** TU Wien — Master's in Electrical Engineering Technology (EET)  
+**Institution:** TU Wien — Bachelor's in Electrical Engineering Technology (EET)  
 **Date:** April 2026
 
 ---
