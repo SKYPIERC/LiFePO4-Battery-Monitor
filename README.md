@@ -15,7 +15,6 @@ in MATLAB Simscape.
 
 This workflow directly mirrors industry-standard battery development practices used in 
 automotive and energy storage applications.
-
 ---
 
 ## Hardware Setup
@@ -31,31 +30,29 @@ automotive and energy storage applications.
 
 ### Wiring Diagram
 
+```
 Battery + ──→ ACS712 IP+ ──→ ACS712 IP- ──→ 5Ω Load ──→ Battery -
-Battery + ──→ Voltage Sensor S+
+Battery + ──→ Voltage Sensor S+ 
 Battery - ──→ Voltage Sensor S-
 Voltage Sensor OUT ──→ Arduino A0
 ACS712 OUT ──→ Arduino A1
-DS18B20 Data ──→ Arduino D2 (with 5.1kΩ pull-up to 5V)
-Arduino USB ──→ PC (MATLAB Serial connection)
-
-
 ---
 
 ## System Architecture
+
+```
 LiFePO4 Cell
-↓
+      ↓
 Sensors (V, I, T)
-↓
+      ↓
 Arduino Uno (data acquisition)
-↓
+      ↓
 MATLAB (real-time logging + plotting)
-↓
+      ↓
 CSV data export
-↓
+      ↓
 Simscape ECM model validation
-
-
+```
 ---
 
 ## Cell Characterization Results
@@ -68,13 +65,21 @@ Simscape ECM model validation
 | Internal resistance (R0) | 0.82Ω | Parameter identification via Simscape |
 | Temperature rise (120s test) | +1.1°C | DS18B20 sensor |
 | Estimated SoC at test start | ~65% | OCV-SoC lookup |
-
 ---
 
 ## Simscape Equivalent Circuit Model
 
 The battery is modeled using an R0 + R1C1 equivalent circuit:
-Voc        R0          R1
+
+```
+    Voc        R0          R1
++──[3.33V]──[0.82Ω]──+──[0.5Ω]──+──── Vout
+                      |           |
+                     C1          ---
+                    [5µF]        ---
+                      |           |
++─────────────────────+-----------+────  GND
+```
 
 ### Model Parameters
 
@@ -85,7 +90,6 @@ Voc        R0          R1
 | R1 | 0.5Ω | Initial estimate |
 | C1 | 5µF | Initial estimate |
 | Initial SoC | 65% | Estimated from OCV |
-
 ---
 
 ## Validation Results
@@ -101,11 +105,11 @@ Voltage RMSE of 27mV represents **<1% error** — confirming the ECM accurately
 captures the cell's steady-state discharge behavior.
 
 ![Validation Plot](results/simulation_vs_real_comparison.png)
-
 ---
 
 ## Repository Structure
 
+```
 LiFePO4-Battery-Monitor/
 ├── arduino/
 │   └── battery_monitor.ino       # Arduino sketch — reads V, I, T via sensors
@@ -119,8 +123,7 @@ LiFePO4-Battery-Monitor/
 ├── results/
 │   └── simulation_vs_real_comparison.png
 └── README.md
-
-
+```
 ---
 
 ## How to Run
@@ -138,20 +141,18 @@ LiFePO4-Battery-Monitor/
 2. Set simulation time to 120 seconds
 3. Run simulation (▶)
 4. Run `matlab/comparison_plot.m` to generate validation plot
-
 ---
 
 ## Key Learnings
 
-- LiFePO4 cells exhibit nonlinear internal resistance — 
+- LiFePO4 cells exhibit nonlinear internal resistance —
   measured Ri varies from 0.82Ω to 3.4Ω depending on discharge current
-- ACS712 30A current sensor requires precise zero-offset 
+- ACS712 30A current sensor requires precise zero-offset
   calibration (measured: 2.4978V vs theoretical 2.5V)
-- Simscape ECM parameter identification via iterative comparison 
+- Simscape ECM parameter identification via iterative comparison
   with real measurements achieves <1% voltage accuracy
-- Cell temperature rise of only 1.1°C over 120s confirms 
+- Cell temperature rise of only 1.1°C over 120s confirms
   LiFePO4 excellent thermal stability
-
 ---
 
 ## Relevance to Solar Energy Storage
@@ -162,9 +163,8 @@ LiFePO4 is the preferred chemistry for solar energy storage systems due to:
 - Flat discharge curve — stable voltage for inverter operation
 - No thermal runaway risk — safe for island/remote deployments
 
-This monitoring and modeling methodology directly applies to solar+storage 
+This monitoring and modeling methodology directly applies to solar+storage
 system design, battery health monitoring, and BMS development.
-
 ---
 
 ## Tools Used
@@ -183,3 +183,6 @@ system design, battery health monitoring, and BMS development.
 - [ ] Extend to multi-cell pack monitoring
 - [ ] Add wireless data logging via Bluetooth
 - [ ] Full discharge curve characterization (0-100% SoC)
+DS18B20 Data ──→ Arduino D2 (with 5.1kΩ pull-up to 5V)
+Arduino USB ──→ PC (MATLAB Serial connection)
+```
